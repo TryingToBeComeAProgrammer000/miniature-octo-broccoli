@@ -1,6 +1,8 @@
 package task_3_ds;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,15 +21,16 @@ public class Task_3_DS {
     public static void Menu() {
 
         Scanner scan = new Scanner(System.in);
-        System.out.println("Ingrese una opcion:\n1- Seguimiento de pedidos");
+        System.out.println("Ingrese una opcion:\n1- Seguimiento de pedidos\n2- Gestor de pacientes");
         int opcion = scan.nextInt();
 
         switch (opcion) {
             case 1:
-                Pedidos();
+                pedidos();
                 
                 break;
             case 2:
+                gestionPacientes();
                 break;
             case 3:
                 opcion = scan.nextInt();
@@ -50,7 +53,9 @@ public class Task_3_DS {
         }
     }
 
-    public static void Pedidos() {
+    //Control de pedidos
+    
+    public static void pedidos() {
 
         List<String> nombre = new ArrayList<>();
         List<Double> monto = new ArrayList<>();
@@ -116,16 +121,18 @@ public class Task_3_DS {
         
         double montoPromedio = montoGeneral / monto.size();
         System.out.println("");
+        System.out.println("Estadisticas");
+        System.out.println("");
         System.out.println("Total: " + montoGeneral);
         System.out.println("Promedio: " + montoPromedio);
         System.out.println("Tarjeta: " + tarjeta + "\nEfectivo: " + efectivo);
-        System.out.println("Más caro: " + nombre.get(idMontoMax) + " == " + max);
-        System.out.println("Más barato: " + nombre.get(idMontoMin) + " == " + min);
+        System.out.println("Mas caro: " + nombre.get(idMontoMax) + " == " + max);
+        System.out.println("Mas barato: " + nombre.get(idMontoMin) + " == " + min);
 
     }
     
     public static void reporte(List<String> nombre, List<Double> monto,List<String> metodoPago){
-        
+        System.out.println("");
         System.out.println("**** Reporte por cliente ****");
         
         for (int clientes = 0; clientes < nombre.size(); clientes++) {
@@ -138,4 +145,101 @@ public class Task_3_DS {
         }
     
     }
+    
+    
+    //Gestion de datos de pacientes
+    
+    public static void gestionPacientes(){
+        
+        Scanner scan = new Scanner(System.in);
+        HashMap <Integer, HashMap<String, String>> pacientes = new HashMap<>();
+        
+        for (int paciente = 0; paciente < 5; paciente++) {
+            
+            HashMap<String,String> datosPacientes = new HashMap<>();
+            System.out.println("");
+            System.out.println("Ingrese el nombre del paciente");
+            String nombre = scan.nextLine();
+            datosPacientes.put("Nombre", nombre);
+            
+            System.out.println("Ingrese la edad del paciente");
+            String edad = scan.nextLine();
+            datosPacientes.put("Edad", edad);
+
+            
+            System.out.println("Ingrese el diagnostico del paciente");
+            String diagnostico = scan.nextLine();
+            datosPacientes.put("Diagnostico", diagnostico);
+            
+            System.out.println("Ingrese el estado del paciente (1- Estable o 2- Critico)");
+            String estado = scan.nextLine();
+            datosPacientes.put("Estado", estado);
+            
+            pacientes.put(paciente, datosPacientes);
+        }
+        estadisticasPacientes(pacientes);
+        reporte(pacientes);
+    }
+    
+    public static void estadisticasPacientes(HashMap <Integer, HashMap<String, String>> pacientes){ // Recibe el mapa principal "pacientes"
+        
+        
+        int sumaEdades =0;
+        int edadesPacientes = pacientes.size();
+            
+        for (int p : pacientes.keySet()) {
+            int edadActual = Integer.parseInt(pacientes.get(p).get("Edad"));
+            sumaEdades += edadActual;
+        }
+
+        int promedioEdades = sumaEdades / edadesPacientes;
+        
+        int estables = 0;
+        int criticos = 0;
+        
+        
+        for (int id : pacientes.keySet()) {
+            HashMap <String, String> datos = pacientes.get(id); 
+            String estado = datos.get("Estado");
+
+            
+            if (estado.equals("2")) {
+                criticos ++;
+            }else if(estado.equals("1")){
+                estables ++;
+            }
+        }
+        
+        int menorEdad = Integer.MAX_VALUE;
+        int mayorEdad = Integer.MIN_VALUE;
+
+        for (int edades : pacientes.keySet()) {
+            
+            HashMap <String, String> datos = pacientes.get(edades); 
+            
+            String edad = datos.get("Edad");
+            int edadActual = Integer.parseInt(edad);
+            
+            if (edadActual < menorEdad){
+                menorEdad = edadActual;} 
+            if(edadActual > mayorEdad){
+                mayorEdad = edadActual;}
+        }
+    }
+    
+    public static void reporte(HashMap <Integer, HashMap<String, String>> pacientes){
+    
+        
+        for (int id : pacientes.keySet()) {
+            HashMap <String, String> datos = pacientes.get(id);
+            System.out.println("");
+            System.out.println("");
+            System.out.println("Su nombre es: "+datos.get("Nombre"));
+            System.out.println("Su edad es: "+datos.get("Edad"));
+            System.out.println("Usted tiene: "+datos.get("Diagnostico"));
+            System.out.println("Su estado actual es: "+datos.get("Estado"));
+        }
+    
+    }
+    
 }
