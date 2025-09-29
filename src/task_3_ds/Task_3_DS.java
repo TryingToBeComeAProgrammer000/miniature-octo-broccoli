@@ -13,45 +13,40 @@ import java.util.Scanner;
 public class Task_3_DS {
 
     public static void main(String[] args) {
-
         Menu();
-
     }
 
     public static void Menu() {
+    Scanner scan = new Scanner(System.in);
+    int opcion;
 
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Ingrese una opcion:\n1- Seguimiento de pedidos\n2- Gestor de pacientes");
-        int opcion = scan.nextInt();
+    do {
+        System.out.println("\n=*=*= Menu =*=*=");
+        System.out.println("1. Seguimiento de pedidos");
+        System.out.println("2. Gestion de pacientes");
+        System.out.println("3. Zona urbana");
+        System.out.println("4. Salir");
+        System.out.print("Seleccione una opcion: ");
+        opcion = scan.nextInt();
 
         switch (opcion) {
             case 1:
                 pedidos();
-                
                 break;
             case 2:
                 gestionPacientes();
                 break;
             case 3:
-                opcion = scan.nextInt();
-                switch (opcion) {
-                    case 1:
-
-                        break;
-                    case 2:
-
-                        break;
-                    case 3:
-
-                        break;
-                    default:
-
-                }
+                menuZonaUrbana(scan);
+                break;
+            case 4:
+                System.out.println("Saliendo...");
                 break;
             default:
-                System.out.println("Ingrese una opcion valida");
+                System.out.println("Opción no válida.");
         }
-    }
+    } while (opcion != 4);
+}
 
     //Control de pedidos
     
@@ -165,7 +160,6 @@ public class Task_3_DS {
             System.out.println("Ingrese la edad del paciente");
             String edad = scan.nextLine();
             datosPacientes.put("Edad", edad);
-
             
             System.out.println("Ingrese el diagnostico del paciente");
             String diagnostico = scan.nextLine();
@@ -242,4 +236,123 @@ public class Task_3_DS {
     
     }
     
+    //Zona Urbana
+    
+    public static void menuZonaUrbana(Scanner scan) {
+    inicializarZona();
+    int opcion;
+
+    do {
+        System.out.println("\n--- Zona Urbana ---");
+        System.out.println("1- Ver estado de la zona");
+        System.out.println("2- Marcar sector");
+        System.out.println("3- Ver estadisticas");
+        System.out.println("4- Volver al menu principal");
+        System.out.print("Seleccione una opcion: ");
+        opcion = scan.nextInt();
+
+        switch (opcion) {
+            case 1:
+                mostrar_matriz();
+                break;
+            case 2:
+                System.out.print("Fila (0-5): ");
+                int fila = scan.nextInt();
+                System.out.print("Columna (0-5): ");
+                int columna = scan.nextInt();
+                System.out.print("Estado (S/P/A): ");
+                String estado = scan.next().toUpperCase();
+                marcar_sector(fila, columna, estado);
+                break;
+            case 3:
+                mostrar_estadisticas();
+                break;
+            case 4:
+                System.out.println("Volviendo al menu principal...");
+                break;
+            default:
+                System.out.println("Opcion no valida.");
+        }
+    } while (opcion != 4);
 }
+    
+    static String[][] zona = new String[6][6];
+    
+    public static void inicializarZona() {
+        for (int f = 0; f < 6; f++) {
+            for (int c = 0; c < 6; c++) {
+                zona[f][c] = "S";
+            }
+        }
+    }
+    
+    public static void mostrar_matriz(){
+        System.out.println("\nEstado actual:");
+        for (int f = 0; f < 6; f++) {
+            for (int c = 0; c < 6; c++) {
+                System.out.print(zona[f][c] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void marcar_sector(int fila, int columna, String estado) {
+        zona[fila][columna] = estado;
+
+        if (estado.equals("A")) {
+            int[][] direcciones = { {-1,0}, {1,0}, {0,-1}, {0,1} };
+            for (int[] d : direcciones) {
+                int f = fila + d[0];
+                int c = columna + d[1];
+                if (f >= 0 && f < 6 && c >= 0 && c < 6) {
+                    if (zona[f][c].equals("S")) {
+                        zona[f][c] = "P";
+                    }
+                }
+            }
+        }
+    }
+
+    public static void mostrar_estadisticas() {
+        int s = 0, p = 0, a = 0;
+        for (int f = 0; f < 6; f++) {
+            for (int c = 0; c < 6; c++) {
+                switch (zona[f][c]) {
+                    case "S": s++; break;
+                    case "P": p++; break;
+                    case "A": a++; break;
+                }
+            }
+        }
+        System.out.println("S: " + s + ", P: " + p + ", A: " + a);
+        System.out.println("Porcentaje en alerta: " + (a * 100 / 36) + "%");
+    }
+
+    public static void zonaUrbana() {
+        Scanner sc = new Scanner(System.in);
+        inicializarZona();
+
+        while (true) {
+            mostrar_matriz();
+            mostrar_estadisticas();
+
+            System.out.println("\n1. Marcar sector  |  2. Salir");
+            int opcion = sc.nextInt();
+            if (opcion == 2) break;
+
+            System.out.print("Fila (0-5): ");
+            int fila = sc.nextInt();
+            System.out.print("Columna (0-5): ");
+            int columna = sc.nextInt();
+            System.out.print("Estado (S/P/A): ");
+            String estado = sc.next().toUpperCase();
+
+            marcar_sector(fila, columna, estado);
+        }
+
+        System.out.println("Fin del programa.");
+        sc.close();
+    }
+}
+    
+
